@@ -4,7 +4,7 @@ import {Button, Card, CardSection, Input} from './common';
 class LoginForm extends Component {
   constructor(props) {
     super(props);
-    this.state = {email: ""};
+    this.state = {email: "", password: ''};
   }
   
   render() {
@@ -14,6 +14,15 @@ class LoginForm extends Component {
                placeholder="user@gmail.com"
                onChangeText={email => this.setState({email})}
                value={this.state.email}/>
+      </CardSection>
+      
+      <CardSection>
+        <Input secureTextEntry
+               label="Password"
+               placeholder = "password"
+               onChangeText={password => this.setState({password})}
+               value = {this.state.password}
+        />
       </CardSection>
       
       <CardSection>

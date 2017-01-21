@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import {View, Text} from 'react-native';
-import {Header} from './components/common'
-import * as firebase from "firebase";
+import {View} from 'react-native';
+import {Header} from './components/common';
+import LoginForm from './components/LoginForm';
+import * as firebase from 'firebase';
 
 class App extends Component {
-  componentWillMount(){
+  componentWillMount() {
     // Initialize Firebase
     // TODO: Replace with your project's customized code snippet
     const config = {
@@ -15,15 +16,13 @@ class App extends Component {
       messagingSenderId: "742565197509"
     };
     firebase.initializeApp(config);
-  
+    
   }
   
-  render(){
+  render() {
     return <View>
       <Header title="Authentication"/>
-      <Text>
-        An App
-      </Text>
+      <LoginForm />
     </View>
   }
 }

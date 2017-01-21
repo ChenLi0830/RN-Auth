@@ -5,6 +5,8 @@ import LoginForm from './components/LoginForm';
 import * as firebase from 'firebase';
 
 class App extends Component {
+  state = { loggedIn: false };
+  
   componentWillMount() {
     // Initialize Firebase
     // TODO: Replace with your project's customized code snippet
@@ -16,7 +18,14 @@ class App extends Component {
       messagingSenderId: "742565197509"
     };
     firebase.initializeApp(config);
-    
+  
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.setState({ loggedIn: true });
+      } else {
+        this.setState({ loggedIn: false });
+      }
+    });
   }
   
   render() {

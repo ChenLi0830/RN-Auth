@@ -3,6 +3,8 @@ import {View} from 'react-native';
 import {Header, Button, Spinner, Card, CardSection} from './components/common';
 import LoginForm from './components/LoginForm';
 import * as firebase from 'firebase';
+import Router from './Router';
+
 
 class App extends Component {
   state = {loggedIn: null};
@@ -28,26 +30,27 @@ class App extends Component {
     });
   }
   
-  renderContent() {
-    switch (this.state.loggedIn) {
-      case true:
-        return <CardSection>
-            <Button onPress={() => firebase.auth().signOut()}>Log Out</Button>
-          </CardSection>
-      
-      case false:
-        return <LoginForm />;
-      
-      default:
-        return <Spinner size="large"/>;
-    }
-  }
+  // renderContent() {
+  //   switch (this.state.loggedIn) {
+  //     case true:
+  //       return <CardSection>
+  //           <Button onPress={() => firebase.auth().signOut()}>Log Out</Button>
+  //         </CardSection>
+  //
+  //     case false:
+  //       return <LoginForm />;
+  //
+  //     default:
+  //       return <Spinner size="large"/>;
+  //   }
+  // }
   
   render() {
-    return <View>
-      <Header title="Authentication"/>
-      {this.renderContent()}
-    </View>
+    return <Router/>;
+    // return <View>
+    //   <Header title="Authentication"/>
+    //   <LoginForm/>
+    // </View>
   }
 }
 

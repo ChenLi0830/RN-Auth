@@ -1,5 +1,5 @@
 import firebase from 'firebase';
-
+import {Actions} from 'react-native-router-flux';
 // Action types
 const USER_LOGIN_START = "USER_LOGIN_START",
     USER_LOGIN_FAIL = "USER_LOGIN_FAIL",
@@ -39,11 +39,13 @@ export const userLogin = (email, password) => {
       
       const user = await firebase.auth().signInWithEmailAndPassword(email, password);
       dispatch(userLoginSuccess(user));
+      Actions.employeeList();
     }
     catch (err) {
       try {
         const user = await firebase.auth().createUserWithEmailAndPassword(email, password);
         dispatch(userLoginSuccess(user));
+        Actions.employeeList();
         // this.onLoginSuccess();
       }
       catch (err) {
@@ -75,7 +77,7 @@ const reducer = (state = initialState, action) => {
         error: action.payLoad.message || "Authentication Failed"//JSON.stringify(action.payLoad) ||
       };
     case "USER_LOGIN_SUCCESS":
-      return {...state, loading: false, user: action.payLoad};
+      return {...state, loading: false, user: action.payLoad, error: ""};
     case "USER_EMAIL_CHANGE":
       return {...state, email: action.payLoad};
     case "USER_PASSWORD_CHANGE":

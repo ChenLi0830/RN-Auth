@@ -5,8 +5,14 @@ import EmployeeList from './components/EmployeeList';
 
 const RouterComponent = () => {
   return <Router sceneStyle={{paddingTop: 65}}>
-    <Scene key="login" component={LoginForm} title="Please Login" initial  />
-    <Scene key="employeeList" component={EmployeeList} title="Employee List" />
+    <Scene key="auth">
+      <Scene key="login" component={LoginForm} title="Please Login"/>
+    </Scene>
+    
+    <Scene key="main" initial>
+      <Scene key="employeeList" rightTitle="Add" onRight = {()=>{console.log("Add clicked!")}}
+             component={EmployeeList} title="Employee List"/>
+    </Scene>
   </Router>
 };
 

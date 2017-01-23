@@ -39,13 +39,13 @@ export const userLogin = (email, password) => {
       
       const user = await firebase.auth().signInWithEmailAndPassword(email, password);
       dispatch(userLoginSuccess(user));
-      Actions.employeeList();
+      Actions.main();
     }
     catch (err) {
       try {
         const user = await firebase.auth().createUserWithEmailAndPassword(email, password);
         dispatch(userLoginSuccess(user));
-        Actions.employeeList();
+        Actions.main();
         // this.onLoginSuccess();
       }
       catch (err) {

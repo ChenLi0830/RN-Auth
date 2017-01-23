@@ -14,22 +14,22 @@ const userLoginStart = () => ({
 
 const userLoginFail = (error) => ({
   type: USER_LOGIN_FAIL,
-  payLoad: error,
+  payload: error,
 });
 
 const userLoginSuccess = (user) => ({
   type: USER_LOGIN_SUCCESS,
-  payLoad: user,
+  payload: user,
 });
 
 export const userEmailChange = (email)=>({
   type: USER_EMAIL_CHANGE,
-  payLoad: email,
+  payload: email,
 });
 
 export const userPasswordChange = (password)=>({
   type: USER_PASSWORD_CHANGE,
-  payLoad: password,
+  payload: password,
 });
 
 export const userLogin = (email, password) => {
@@ -74,14 +74,14 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         loading: false,
-        error: action.payLoad.message || "Authentication Failed"//JSON.stringify(action.payLoad) ||
+        error: action.payload.message || "Authentication Failed"//JSON.stringify(action.payload) ||
       };
     case "USER_LOGIN_SUCCESS":
-      return {...state, loading: false, user: action.payLoad, error: ""};
+      return {...state, loading: false, user: action.payload, error: ""};
     case "USER_EMAIL_CHANGE":
-      return {...state, email: action.payLoad};
+      return {...state, email: action.payload};
     case "USER_PASSWORD_CHANGE":
-      return {...state, password: action.payLoad};
+      return {...state, password: action.payload};
     default:
       return state;
   }

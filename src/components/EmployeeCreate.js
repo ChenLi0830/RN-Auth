@@ -21,7 +21,9 @@ const EmployeeCreate = (props) => {
         value={props.phone}
         onChange={(value)=>props.employeeFormChange("phone", value)}
     >Phone</InputItem>
+  
     
+    <Text style={styles.pickerText}> Select Shift </Text>
     <Picker
         selectedValue={props.shift}
         onValueChange={(value) => props.employeeFormChange("shift", value)}>
@@ -34,13 +36,18 @@ const EmployeeCreate = (props) => {
       <Picker.Item label="Sunday" value="Sunday" />
     </Picker>
     
-    <Button style={styles.btn} type="primary" onClick={e => console.log(e)}>create</Button>
+    <Button style={styles.btn} type="primary" onClick={e => console.log(e)}>Create</Button>
   </List>
 };
 
 const styles = {
   btn:{
     marginHorizontal: 10,
+  },
+  pickerText:{
+    paddingTop: 15,
+    paddingLeft: 15,
+    fontSize:17,
   }
 };
 

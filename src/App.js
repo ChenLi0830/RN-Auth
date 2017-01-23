@@ -1,13 +1,12 @@
 import React, {Component} from 'react';
-import {View} from 'react-native';
-import {Header, Button, Spinner, Card, CardSection} from './components/common';
-import LoginForm from './components/LoginForm';
 import * as firebase from 'firebase';
 import Router from './Router';
-
+import LoginForm from  './components/LoginForm';
+import {Provider} from 'react-redux';
+import store from './modules';
 
 class App extends Component {
-  state = {loggedIn: null};
+  // state = {loggedIn: null};
   
   componentWillMount() {
     // Initialize Firebase
@@ -21,13 +20,13 @@ class App extends Component {
     };
     firebase.initializeApp(config);
     
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        this.setState({loggedIn: true});
-      } else {
-        this.setState({loggedIn: false});
-      }
-    });
+    // firebase.auth().onAuthStateChanged((user) => {
+    //   if (user) {
+    //     this.setState({loggedIn: true});
+    //   } else {
+    //     this.setState({loggedIn: false});
+    //   }
+    // });
   }
   
   // renderContent() {
@@ -45,8 +44,11 @@ class App extends Component {
   //   }
   // }
   
+  
   render() {
-    return <Router/>;
+    return <Provider store={store}>
+      <Router/>
+    </Provider>;
     // return <View>
     //   <Header title="Authentication"/>
     //   <LoginForm/>

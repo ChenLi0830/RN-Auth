@@ -1,5 +1,7 @@
 import firebase from 'firebase';
 import {Actions} from 'react-native-router-flux';
+import {checkStatus} from '../api';
+
 // Action types
 const USER_LOGIN_START = "USER_LOGIN_START",
     USER_LOGIN_FAIL = "USER_LOGIN_FAIL",
@@ -22,18 +24,38 @@ const userLoginSuccess = (user) => ({
   payload: user,
 });
 
-export const userEmailChange = (email)=>({
+export const userEmailChange = (email) => ({
   type: USER_EMAIL_CHANGE,
   payload: email,
 });
 
-export const userPasswordChange = (password)=>({
+export const userPasswordChange = (password) => ({
   type: USER_PASSWORD_CHANGE,
   payload: password,
 });
 
+const saveUserToDb = async(user) => {
+  try {
+    let response = await fetch('https://85a1lum72a.execute-api.us-west-2.amazonaws.com/dev/users', {
+      method: 'POST',
+      // headers: {
+      //   'Accept': 'application/json',
+      //   'Content-Type': 'application/json',
+      // },
+      body: JSON.stringify(user)
+    });
+    console.log(response);
+    checkStatus(response);
+    let responseJson = await response.json();
+    console.log("responseJson", responseJson);
+    // return responseJson.movies;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const userLogin = (email, password) => {
-  return async (dispatch) => {
+  return async(dispatch) => {
     try {
       dispatch(userLoginStart());
       
@@ -44,7 +66,16 @@ export const userLogin = (email, password) => {
     catch (err) {
       try {
         const user = await firebase.auth().createUserWithEmailAndPassword(email, password);
-        dispatch(userLoginSuccess(user));
+        const savedUser = {
+          email: user.email,
+          emailVerified: user.emailVerified,
+          displayName: user.displayName,
+          isAnonymous: user.isAnonymous,
+          id: user.uid,
+          photoURL: user.photoURL,
+        };
+        await saveUserToDb(savedUser);
+        await dispatch(userLoginSuccess(user));
         Actions.main();
         // this.onLoginSuccess();
       }

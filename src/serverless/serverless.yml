@@ -50,7 +50,7 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  upsertUser:
+  users:
     handler: users.crud
     memorySize: 128 # optional, default is 1024
     timeout: 10 # optional, default is 6
@@ -108,7 +108,7 @@ resources:
         AttributeDefinitions:
           -
             AttributeName: id
-            AttributeType: N
+            AttributeType: S
         KeySchema:
           -
             AttributeName: id
@@ -125,10 +125,10 @@ resources:
         AttributeDefinitions:
           -
             AttributeName: userId
-            AttributeType: N
+            AttributeType: S
           -
             AttributeName: employeeId
-            AttributeType: N
+            AttributeType: S
         KeySchema:
           -
             AttributeName: userId

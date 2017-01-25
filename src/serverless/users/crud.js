@@ -3,59 +3,139 @@
 let AWS = require("aws-sdk");
 let docClient = new AWS.DynamoDB.DocumentClient();
 let request = require('request');
+const api = require('../api');
+
+const tableName = "RNAUTH_Users";
+
+const filterInvalidAttr = (data) => { //filter empty string, object, undefined, null, etc
+  let result = {};
+  Object.keys(data).forEach(key => {
+    if (typeof data[key] === "boolean" || typeof data[key] === "number" ||
+        (typeof data[key] === "string" && data[key].length > 0 )) {
+      result[key] = data[key];
+    }
+  });
+  return result;
+};
 
 const handleRead = (event, context, callback) => {
   console.log("handleRead start");
-  let response = {
-    statusCode: 200,
-    headers: {"Access-Control-Allow-Origin": "*"},
-    body: JSON.stringify({msg: "handleRead start"}),
+  const queryStringParameters = event.queryStringParameters;
+  let params = {
+    TableName: tableName,
+    Key: {
+      id: queryStringParameters.id
+    },
   };
-  callback(null, response);
+  
+  docClient.get(params, (err, data) => {
+    if (err) {
+      console.error("Unable to get item. Error JSON:", JSON.stringify(err), err.stack);
+      callback(err);
+    }
+    let user = data.Item;
+    console.log("Read user success", user);
+    if (!user) callback(new Error("user not found"));
+    
+    let response = {
+      statusCode: 200,
+      headers: {"Access-Control-Allow-Origin": "*"},
+      body: JSON.stringify(user),
+    };
+    callback(null, response);
+    // console.log("GetItem succeeded:", JSON.stringify(item));
+    // callback(null, user);
+  });
 };
 
 const handleCreate = (event, context, callback) => {
-  return new Promise((resolve, reject) => {
-    let params = {
-      TableName: "RNAUTH_Users",
-      // Item: fullUser,
-    };
-    docClient.put(params, (err, data) => {
-      if (err) {
-        console.error("Unable to add item. Error JSON:", JSON.stringify(err), err.stack);
-        return reject(err);
-      } else {
-        console.log("User added successfully");
-        resolve(fullUser);
-      }
-    });
-  })
-  
   console.log("handleCreate start");
-  let response = {
-    statusCode: 200,
-    headers: {"Access-Control-Allow-Origin": "*"},
-    body: JSON.stringify({msg: "handleCreate start"}),
+  // console.log("event.body", event.body);
+  const userRaw = JSON.parse(event.body);
+  const user = api.filterInvalidAttr(userRaw);
+  console.log("user", user);
+  
+  const params = {
+    TableName: tableName,
+    Item: user,
   };
-  callback(null, response);
+  
+  docClient.put(params, (err, data) => {
+    if (err) {
+      console.error("Unable to add item. Error JSON:", JSON.stringify(err), err.stack);
+      callback(err);
+    } else {
+      console.log("User added successfully");
+      let response = {
+        statusCode: 200,
+        headers: {"Access-Control-Allow-Origin": "*"},
+        body: JSON.stringify(user),
+      };
+      callback(null, response);
+    }
+  });
 };
+
 const handleDelete = (event, context, callback) => {
   console.log("handleDelete start");
-  let response = {
-    statusCode: 200,
-    headers: {"Access-Control-Allow-Origin": "*"},
-    body: JSON.stringify({msg: "handleDelete start"}),
+  const userId = JSON.parse(event.body).id;
+  
+  const params = {
+    TableName: tableName,
+    Key: {
+      id: userId,
+    },
+    ReturnValues: "ALL_OLD",
   };
-  callback(null, response);
+  
+  docClient.delete(params, (err, data) => {
+    if (err) {
+      console.error("Unable to delete item. Error JSON:", JSON.stringify(err, null, 2));
+      callback(err);
+    } else {
+      console.log("data", data);
+      console.log("Object.keys(data)", Object.keys(data));
+      if (Object.keys(data).length === 0) {
+        callback(new Error("The item doesn't exist"));
+        return;
+      }
+      console.log("DeleteItem succeeded:", JSON.stringify(data, null, 2));
+      let response = {
+        statusCode: 200,
+        headers: {"Access-Control-Allow-Origin": "*"},
+        body: JSON.stringify({msg: `handleDelete finished for userId ${userId}`}),
+      };
+      callback(null, response);
+    }
+  });
 };
+
 const handleUpdate = (event, context, callback) => {
   console.log("handleUpdate start");
-  let response = {
-    statusCode: 200,
-    headers: {"Access-Control-Allow-Origin": "*"},
-    body: JSON.stringify({msg: "handleUpdate start"}),
+  
+  const userRaw = JSON.parse(event.body);
+  const user = api.filterInvalidAttr(userRaw);
+  console.log("user", user);
+  
+  const params = {
+    TableName: tableName,
+    Item: user,
   };
-  callback(null, response);
+  
+  docClient.put(params, (err, data) => {
+    if (err) {
+      console.error("Unable to add item. Error JSON:", JSON.stringify(err), err.stack);
+      callback(err);
+    } else {
+      console.log("User updated successfully");
+      let response = {
+        statusCode: 200,
+        headers: {"Access-Control-Allow-Origin": "*"},
+        body: JSON.stringify(user),
+      };
+      callback(null, response);
+    }
+  });
 };
 
 const main = (event, context, callback) => {
@@ -79,4 +159,4 @@ const main = (event, context, callback) => {
   }
 };
 
-module.exports  = main;
+module.exports = main;
